@@ -1,5 +1,5 @@
-import products from '@/assets/data/products';
-import Colors from '@/src/constants/Colors';
+import Colors from '@/constants/Colors';
+import products from '@assets/data/products';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { Product } from '../types';
 
@@ -27,6 +27,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         padding: 10,
         borderRadius: 10,
+        flex: 1,
+        maxWidth: '50%',
+        // margin: 10,
 
     },
     title: {
