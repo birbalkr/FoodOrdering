@@ -1,18 +1,29 @@
 import Button from '@/components/Button';
 import { defaultImage } from '@/components/ProductListItem';
+import { useCart } from '@/providers/CartProviders';
+import { PizzaSize } from '@/types';
 import products from '@assets/data/products';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
-const sizes = ['S', 'M', 'L', 'XL'];
+const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
 
 const ProductDetailsScreen = () => {
+  const router = useRouter();
   const { id } = useLocalSearchParams();
+  const{addItem} = useCart();
 
-  const [selectedSize, setSelectedSize] = useState('M');
+  const [selectedSize, setSelectedSize] = useState<PizzaSize>('M');
 
   const product = products.find((p) => p.id.toString() === id);
+
+  const onAddToCart = () => {
+    if(product){
+      addItem(product,selectedSize);
+      router.push('/cart');
+    }
+  };
 
   if (!product) {
     return <Text>Product not found</Text>;
@@ -25,13 +36,27 @@ const ProductDetailsScreen = () => {
 
       <Text>Select size</Text>
       <View style={styles.sizes}>
-        {sizes.map(size => (
-          <Pressable 
-          onPress={()=>{setSelectedSize(size)}}
-          style={[styles.size,  { 
-          backgroundColor: selectedSize === size ? 'gainsboro' : 'white'
-        }]} key={size}>
-            <Text style={[styles.sizeText, {color: selectedSize === size ? 'black' : 'gray'}]}>{size}</Text>
+        {sizes.map((size: PizzaSize) => (
+          <Pressable
+            onPress={(): void => {
+              setSelectedSize(size);
+            }}
+            style={[
+              styles.size,
+              {
+          backgroundColor: selectedSize === size ? 'gainsboro' : 'white',
+              },
+            ]}
+            key={size}
+          >
+            <Text
+              style={[
+          styles.sizeText,
+          { color: selectedSize === size ? 'black' : 'gray' },
+              ]}
+            >
+              {size}
+            </Text>
           </Pressable>
         ))}
 
@@ -40,7 +65,7 @@ const ProductDetailsScreen = () => {
 
       <Text style={styles.price}>$ {product.price}</Text>
 
-      <Button text='Add to cart' onPress={() => {}} />
+      <Button text='Add to cart' onPress={onAddToCart} />
     </View>
   )
 }
